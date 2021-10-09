@@ -119,7 +119,7 @@
     </span>
   </div>
 
-  {% if show_buy_button and product %}
+  {% if show_buy_button and variant.available %}
     <div class="price__vendor price__vendor--listing">
       <a href="https://brass-tacks-project.myshopify.com/cart/{{variant.id}}:1"
       class="shopify-payment-button__button shopify-payment-button__button--unbranded">Buy Now</a>
