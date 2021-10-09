@@ -6,7 +6,7 @@
     - product: {Object} Product Liquid object (optional)
     - show_vendor: {Boolean} Show the product's vendor depending on the section setting (optional)
     - show_buy_button: {Boolean} Show Buy Now Button
-    - show_add-to-cart: {Boolean} Show Add to Cart Button
+    - show_addtocart_button: {Boolean} Show Add to Cart Button
 
     Usage:
     {% include 'product-price-listing', product: product %}
@@ -42,6 +42,7 @@
       </dd>
     </div>
   {% endif %}
+
 
   {%- comment -%}
     Explanation of description list:
@@ -121,8 +122,17 @@
 
   {% if show_buy_button and variant.available %}
     <div class="price__vendor price__vendor--listing">
-      <a href="https://brass-tacks-project.myshopify.com/cart/{{variant.id}}:1"
-      class="shopify-payment-button__button shopify-payment-button__button--unbranded">Buy Now</a>
+      {% if show_addtocart_button %}
+        <form method="post" action="" onsubmit="addToCart(event); return false;" class="addtocart_form">
+          <input type="hidden" name="id" value="{{ product.variants.first.id }}" />
+          <input type="hidden" name="quantity" value="1" />
+          <button type="submit"
+          class="shopify-payment-button__button shopify-payment-button__button--unbranded btn">Add to Cart</button>
+        </form>
+      {% else %}
+        <a href="https://brass-tacks-project.myshopify.com/cart/{{variant.id}}:1"
+        class="shopify-payment-button__button shopify-payment-button__button--unbranded">Buy Now</a>
+      {% endif %}      
     </div>
   {% endif %}
 </dl>
