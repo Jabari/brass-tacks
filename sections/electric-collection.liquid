@@ -60,15 +60,21 @@
 
 </div>
 <script>
+  function itemAdded() {
+    $.getJSON('/cart.js', function(cart) {
+     $('#CartCount').html(cart.item_count); 
+    });
+  }
+  
   function addToCart(event) {
-    console.log($(event.target).serialize())
-    event.preventDefault();
-
+     event.preventDefault();
+	
     $.ajax({
       type: 'POST',
       url: '/cart/add.js',
       dataType: 'json',
-      data: $(event.target).serialize()
+      data: $(event.target).serialize(),
+      success: itemAdded()
     });
   }
 </script>
