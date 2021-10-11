@@ -48,7 +48,13 @@
       {% endfor %}
     {% endfor %}
   </ul>
-
+	
+  {% if is_empty_collection %}
+      <div class="grid__item small--text-center">
+        <p class="text-center">{{ 'collections.general.no_matches' | t }}</p>
+      </div>
+   {% endif %}
+  
   {% if section.settings.show_view_all %}
     <hr class="hr--invisible" aria-hidden="true" />
     <div class="text-center">
@@ -281,7 +287,7 @@
       "label": {
         "en": "Show Buy Now button"
       },
-      "default": true
+      "default": false
     },
     {
       "type": "checkbox",
@@ -289,7 +295,15 @@
       "label": {
         "en": "Show Add to Cart button"
       },
-      "default": true
+      "default": false
+    },
+	{
+      "type": "checkbox",
+      "id": "show_variants",
+      "label": {
+        "en": "Show Variants"
+      },
+      "default": false
     },
     {
       "type": "checkbox",
