@@ -25,12 +25,13 @@
   {%- assign product_limit = section.settings.grid | times: section.settings.rows -%}
 
   <ul class="grid grid--uniform grid--view-items">
+    
     {% for product in collection.products limit: product_limit %}
       <li class="grid__item grid__item--{{section.id}} {{ grid_item_width }}">
         {% include 'product-card-grid', max_height: max_height, product: product, show_vendor: section.settings.show_vendor %}
       </li>
     {% else %}
-
+		
       {% for i in (1..product_limit) %}
         <li class="grid__item grid__item--{{section.id}} {{ grid_item_width }}">
           <div class="grid-view-item product-card">
@@ -47,6 +48,7 @@
         </li>
       {% endfor %}
     {% endfor %}
+    
   </ul>
 	
   {% if is_empty_collection %}
@@ -65,24 +67,105 @@
   {% endif %}
 
 </div>
-<script>
-  function itemAdded() {
-    $.getJSON('/cart.js', function(cart) {
-     $('#CartCount').html(cart.item_count); 
-    });
+<div id="modal"></div>
+<style>
+  #modal {
+    display: none;
+    position: absolute;
+    background-size: cover;
+    top: 15vh;
+    width: 50%;
+    margin: auto;
+    height: 430px;
+    min-width: 15em;
+    max-width: 650px;
+    border-radius: .5em;
+    color: #efefef;
+    font-size: 2rem;
+    text-align: center;
+    text-shadow: 1px 0px 3px #444;
+    font-weight: 600;
+    padding: 1em;
+    left: 25%;
+    right: 25%;
+  }
+  .modal--success {
+    background: #222 url(https://c.tenor.com/cE3a9ICgYwIAAAAd/key-and-peele-righteous.gif) no-repeat center bottom;
+  }
+  .modal--error {
+    background: #222 url(https://c.tenor.com/kEmm33wknM4AAAAd/key-and-peele.gif) no-repeat center bottom;
   }
   
-  function addToCart(event) {
-     event.preventDefault();
-	
-    $.ajax({
-      type: 'POST',
-      url: '/cart/add.js',
-      dataType: 'json',
-      data: $(event.target).serialize(),
-      success: itemAdded()
-    });
+  @media only screen and (max-width: 450px) {
+    #addtocart-modal {
+      left: 5%;
+      right: 5%;
+    }
   }
+</style>
+<script>
+    let variantId, $productContainer, optionField, variantImgUrl, variantPrice, variantComparePrice;
+      const $modal = $('#modal');
+    
+    function showModal(modalType, modalText){  
+      if (modalType == 'success') {
+          $modal.removeClass('modal--error').addClass('modal--success');
+      } else if (modalType == 'error') {
+        $modal.removeClass('modal--success').addClass('modal--error');
+      }
+
+      $modal.html(modalText);
+      $modal.show(); 
+      setTimeout(function(){
+        $modal.hide();
+      }, 4000);
+    }
+
+    function itemAdded(productName) {
+      $.getJSON('/cart.js', function(cart) {
+        
+       $('#CartCount').removeClass('hide critical-hidden').html(cart.item_count +1); 
+        showModal('success', `Your ${productName} was added to your cart.`);
+      });
+    }
+
+    function addToCart(event, productName) {
+       event.preventDefault();
+		
+      $.ajax({
+        type: 'POST',
+        url: '/cart/add.js',
+        dataType: 'json',
+        data: $(event.target).serialize(),
+        success: itemAdded(productName),
+        error: function(xhr, ajaxOptions, thrownError) {
+          showModal('error', thrownError)
+        } 
+      });
+    }
+
+    function changeVariant(event, productUrl, productImg) {
+      variantId = event.target.value;
+      $productContainer = $(event.target.parentElement).parent().parent();
+      optionField = $(event.target).children()[event.target.selectedIndex];
+      variantPrice = $(optionField).attr('data-price');
+      variantComparePrice = $(optionField).attr('data-compare_price');
+      variantImgUrl = $(optionField).attr('data-img_url');
+      $($productContainer).find('.buynow-button').attr('href', 'https://brass-tacks-project.myshopify.com/cart/' + variantId + ':1');
+      $($productContainer).find('.full-width-link').attr('href', '{{ productUrl | within: collection }}' + productUrl + '?variant=' + variantId);
+      $($productContainer).find('.variant-id__field').val(variantId);
+      $($productContainer).find('.price .price__regular .price-item--regular').html(variantPrice);
+      if (variantComparePrice) {
+          $($productContainer).find('.price .price-item--sale').html(variantPrice);
+          $($productContainer).find('.price .price__compare .price-item--regular').html(variantComparePrice);
+      }
+      if (variantImgUrl) {
+            $($productContainer).find('.product-card__image-wrapper img').attr('srcset', 'https://cdn.shopify.com/s/files/1/0602/0310/6559/' + variantImgUrl);
+      } else {
+          $($productContainer).find('.product-card__image-wrapper img').attr('srcset', 'https://cdn.shopify.com/s/files/1/0602/0310/6559/' + productImg);
+      }
+    }
+
 </script>
 
 
