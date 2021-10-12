@@ -6,7 +6,7 @@
     - show_vendor: {Boolean} Show the product's vendor depending on the section setting (optional)
 
     Usage:
-    {% include 'product-card-grid', max_height: max_height, product: product, show_vendor: section.settings.show_vendor %}
+    {% include 'product-card-grid', max_height: max_height, product: product, show_vendor: section.settings.show_vendor, show_buy_button: section.settings.show_buy_button, show_addtocart_button: section.settings.show_addtocart_button, show_variants: section.settings.show_variants %}
 {% endcomment %}
 <div class="grid-view-item{% unless product.available %} grid-view-item--sold-out{% endunless %} product-card">
   <a class="grid-view-item__link grid-view-item__image-container full-width-link" href="{{ product.url | within: collection }}">
@@ -44,6 +44,5 @@
 
   <div class="h4 grid-view-item__title product-card__title" aria-hidden="true">{{ product.title }}</div>
 
-  {% include 'product-price-listing', product: product, show_vendor: show_vendor %}
-
+  {% include 'product-price-listing', product: product, show_vendor: show_vendor, show_buy_button: section.settings.show_buy_button, show_addtocart_button: section.settings.show_addtocart_button, show_variants: section.settings.show_variants %}
 </div>
