@@ -120,41 +120,7 @@
       <span>{{ 'products.product.sold_out' | t }}</span>
     </span>
   </div>
-
   {% if show_buy_button and variant.available %}
-    <div class="price__vendor price__vendor--listing">
-      
-      {% if show_variants and variant.options.size > 0 %}
-        <label for="variant-select">Select an option:</label>
-        <select name="variants" id="variant-select" value="" onchange="changeVariant(event,
-                                                                                    '{{ product.url }}',
-                                                                                    '{{ product.featured_image }}'
-                                                                                    )">
-          {% for variant in product.variants %}
-          	{% if variant.inventory_quantity > 0  %}
-            	<option value="{{ variant.id }}" 
-                        data-img_url="{{ variant.image.src }}"
-                        data-price="{{ variant.price | money }}"
-                        data-compare_price="{{ variant.compare_at_price | money }}"
-                        >{{ variant.title }}</option>
-          	{% else %}
-          		<option value="{{ variant.id }}" disabled>{{ variant.title }}</option>
-          	{% endif %}
-          {% endfor %}
-        </select>
-      {% endif %}
-      
-      {% if show_addtocart_button %}
-        <form method="post" action="" onsubmit="addToCart(event, '{{ product.title }}'); return false;" class="addtocart_form">
-          <input type="hidden" name="id" value="{{ product.variants.first.id }}" class="variant-id__field"/>
-          <input type="hidden" name="quantity" value="1" />
-          <button type="submit"
-          		  class="shopify-payment-button__button shopify-payment-button__button--unbranded btn">Add to Cart</button>
-        </form>
-      {% else %}
-        <a href="https://brass-tacks-project.myshopify.com/cart/{{variant.id}}:1"
-        class="shopify-payment-button__button shopify-payment-button__button--unbranded buynow-button">Buy Now</a>
-      {% endif %}      
-    </div>
+    {% include 'electric-product-price-listing', product: product, variant: variant, show_addtocart_button: section.settings.show_addtocart_button, show_variants: section.settings.show_variants %}
   {% endif %}
 </dl>
