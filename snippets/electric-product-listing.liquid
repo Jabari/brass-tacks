@@ -52,6 +52,12 @@
   </form>
   {% else %}
   <a href="https://brass-tacks-project.myshopify.com/cart/{{variant.id}}:1"
-     class="shopify-payment-button__button shopify-payment-button__button--unbranded buynow-button">Buy Now</a>
+     class="shopify-payment-button__button shopify-payment-button__button--unbranded buynow-button btn">Buy Now</a>
   {% endif %}      
 </div>
+<style>
+.buynow-button {
+    padding: 0.9em 1.5em;
+    margin-top: -2px;
+}
+</style>
